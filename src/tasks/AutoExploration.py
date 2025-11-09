@@ -82,7 +82,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask):
             self.sleep(0.2)
 
     def init_param(self):
-        pass
+        self.current_wave = -1
 
     def stop_func(self):
         self.get_round_info()
