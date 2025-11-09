@@ -32,7 +32,7 @@ This software is open source, free of charge and for learning and exchange purpo
 * 后台运行
 
 ## 兼容性
-* 支持全 16:9 分辨率
+* 支持 1600x900 以上的 16:9 分辨率
 * 简体中文
 
 ### 下载安装包运行
