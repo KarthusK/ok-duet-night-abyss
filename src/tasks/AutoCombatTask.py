@@ -18,7 +18,7 @@ class AutoCombatTask(BaseListenerTask, BaseCombatTask, TriggerTask):
             "技能": "普攻",
             "释放间隔": 0.1,
         })
-        self.config_type["技能"] = {"type": "drop_down", "options": ["普攻", "战技", "终结技"]}
+        self.config_type["技能"] = {"type": "drop_down", "options": ["普攻", "按住普攻", "战技", "终结技"]}
         self.connected = False
 
     def disable(self):
@@ -30,6 +30,7 @@ class AutoCombatTask(BaseListenerTask, BaseCombatTask, TriggerTask):
         self.try_connect_listener()
 
         ret = False
+        _mouse_down= False
         while self.in_combat():
             if not ret:
                 n = self.config.get("释放间隔", 0.1)
@@ -42,6 +43,9 @@ class AutoCombatTask(BaseListenerTask, BaseCombatTask, TriggerTask):
                     char.send_combat_key()
                 elif skill == "终结技":
                     char.send_ultimate_key()
+                elif skill == "按住普攻" and not _mouse_down:
+                    _mouse_down = True
+                    self.mouse_down()
                 else:
                     char.click()
                 self.sleep(interval)
@@ -53,6 +57,8 @@ class AutoCombatTask(BaseListenerTask, BaseCombatTask, TriggerTask):
                 break
 
         if ret:
+            if _mouse_down:
+                self.mouse_up()
             self.combat_end()
         return ret
 
