@@ -27,9 +27,13 @@ This software is open source, free of charge and for learning and exchange purpo
 
 * 副本挂机
   * 全自动或半自动
+  * 自动连战
+  *	适配外部移动逻辑
+* 自动钓鱼（原作者b站无敌大蜜瓜）
 * 快速移动
   * 自动穿引共鸣
-* 支持PC版游戏后台运行
+* 自动花序弓蓄力
+* 后台运行
 
 ## 兼容性
 * 支持 1600x900 以上的 16:9 分辨率
