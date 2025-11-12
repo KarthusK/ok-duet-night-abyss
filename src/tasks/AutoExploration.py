@@ -8,6 +8,7 @@ from src.tasks.BaseCombatTask import BaseCombatTask
 from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 
 logger = Logger.get_logger(__name__)
+_default_movement = lambda: False
 
 
 class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
@@ -33,13 +34,13 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         self.action_timeout = 10
         self.quick_move_task = QuickMoveTask(self)
-        self.external_movement = lambda: False
+        self.external_movement = _default_movement
 
     def config_external_movement(self, func: callable, config: dict):
         if callable(func):
             self.external_movement = func
         else:
-            self.external_movement = lambda: False
+            self.external_movement = _default_movement
         self.config.update(config)
         
     def run(self):
@@ -60,6 +61,8 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         _wait_next_round = False
         _skill_time = 0
         _start_time = 0
+        if self.external_movement is not _default_movement and self.in_team():
+            self.open_in_mission_menu()
         while True:
             if self.in_team():
                 self.progressing = self.find_serum()
@@ -69,14 +72,14 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         _wait_next_round = False
                         self.quick_move_task.reset()
                     _skill_time = self.use_skill(_skill_time)
-                    if (
-                        not _wait_next_round
-                        and time.time() - _start_time
-                        >= self.config.get("超时时间", 120)
-                    ):
-                        _wait_next_round = True
-                        self.log_info_notify("任务超时")
-                        self.soundBeep()
+                    if not _wait_next_round and time.time() - _start_time >= self.config.get("超时时间", 120):
+                        if self.external_movement is not _default_movement:
+                            self.log_info("任务超时")
+                            self.open_in_mission_menu()
+                        else:
+                            self.log_info_notify("任务超时")
+                            self.soundBeep()
+                            _wait_next_round = True
                 else:
                     self.quick_move_task.run()
 
