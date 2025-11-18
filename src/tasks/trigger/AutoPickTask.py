@@ -28,8 +28,7 @@ class AutoPickTask(TriggerTask, BaseDNATask):
             return
         start = time.time()
         while time.time() - start < 1:
-            f = self.find_one('pick_up_f', box=self.f_search_box,
-                              threshold=0.7)
+            f = self.find_best_match_in_box(self.f_search_box, ["pick_up_f", "pick_up_e"], threshold=0.8)
             if not f:
                 return
             percent = self.calculate_color_percentage(f_black_color, f)
@@ -37,11 +36,11 @@ class AutoPickTask(TriggerTask, BaseDNATask):
                 self.log_debug(f'f black color percent: {percent} wait')
                 self.next_frame()
                 continue
-            dialog_search = f.copy(x_offset=f.width * 2.5, width_offset=f.width, height_offset=f.height,
+            dialog_search = f.copy(x_offset=f.width * 2.75, width_offset=f.width, height_offset=f.height,
                                    y_offset=-f.height * 0.5,
                                    name='search_dialog')
             dialog_hand = self.find_feature('dialog_hand', box=dialog_search,
-                                              threshold=0.6)
+                                            threshold=0.6)
 
             if dialog_hand:
                 self.send_fs()
